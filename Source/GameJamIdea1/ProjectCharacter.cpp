@@ -30,5 +30,33 @@ void AProjectCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+	PlayerInputComponent -> BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
+	PlayerInputComponent -> BindAxis("Turn", this, &APawn::AddControllerYawInput);
+
+	PlayerInputComponent -> BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
+	PlayerInputComponent -> BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
+
+	PlayerInputComponent -> BindAxis("MoveForward", this, &AProjectCharacter::MoveForward);
+	PlayerInputComponent -> BindAxis("MoveRight", this, &AProjectCharacter::MoveRight);
+	
 }
 
+void AProjectCharacter::MoveForward(float Value) 
+{
+	if (Value == 0 || !ensure(GetController())) return;
+	FRotator YawRotation(0, GetController() -> GetControlRotation().Yaw, 0);
+
+	FVector ForwardVector = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
+
+	AddMovementInput(ForwardVector, Value);
+}
+
+void AProjectCharacter::MoveRight(float Value) 
+{
+	if (Value == 0 || !ensure(GetController())) return;
+	FRotator YawRotation(0, GetController() -> GetControlRotation().Yaw, 0);
+
+	FVector RightVector = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
+
+	AddMovementInput(RightVector, Value);
+}
