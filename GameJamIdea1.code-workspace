@@ -1,0 +1,28 @@
+{
+	"folders": [
+		{
+			"name": "GameJamIdea1",
+			"path": "."
+		},
+		{
+			"name": "UE4",
+			"path": "/Users/javiertan/UnrealEngine/UE_4.27"
+		}
+	],
+	"settings": {
+		"typescript.tsc.autoDetect": "off",
+		"C_Cpp.default.forcedInclude": [
+			"${default}",
+			"/Users/javiertan/UnrealEngine/UnrealProjects/GameJamIdea1/Intermediate/Build/Mac/x86_64/UE4Editor/Development/GameJamIdea1/Definitions.GameJamIdea1.h",
+			"/Users/javiertan/UnrealEngine/UnrealProjects/GameJamIdea1/Intermediate/Build/Mac/x86_64/GameJamIdea1Editor/Development/Engine/SharedPCH.Engine.ShadowErrors.h"
+		]
+	},
+	"extensions": {
+		"recommendations": [
+			"ms-vscode.cpptools",
+			"ms-dotnettools.csharp",
+			"vadimcn.vscode-lldb",
+			"ms-vscode.mono-debug"
+		]
+	}
+}
