@@ -7,6 +7,7 @@
 #include "AbilitySystemInterface.h"
 #include "GameplayEffectTypes.h"
 #include "GameplayEffect.h"
+#include "AbilityTypes.h"
 
 #include "ProjectCharacter.generated.h"
 
@@ -22,26 +23,48 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	virtual class UAbilitySystemComponent* GetAbilitySystemComponent() const { return SystemComp; }
+	virtual class UAbilitySystemComponent *GetAbilitySystemComponent() const { return SystemComp; }
 
 	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	virtual void SetupPlayerInputComponent(class UInputComponent *PlayerInputComponent) override;
+
+	UPROPERTY(BlueprintReadWrite)
+	class AGameJamIdea1GameMode *GameMode;
+
+	UPROPERTY(BlueprintReadOnly)
+	bool bIsDead = false;
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	class UAbilitySystemComponent* SystemComp = nullptr;
+	class UAbilitySystemComponent *SystemComp = nullptr;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "ProjectCharacter")
-	class UAttributeSetBase* AttributeSetBase;
+	class UAttributeSetBase *AttributeSetBase;
 
 	UFUNCTION(BlueprintCallable)
 	void AcquireAbility(TSubclassOf<class UGameplayAbility> AbilityToAcquire);
 	UFUNCTION(BlueprintCallable)
 	void AcquireAbilities(TArray<TSubclassOf<class UGameplayAbility>> AbilitiesToAcquire);
 
+	UFUNCTION(BlueprintImplementableEvent, meta = (DisplayName = "OnHealthChanged"))
+	void BP_OnHealthChanged(float Health, float MaxHealth, bool FullHealth, float PreviousHealth, AActor *EffectInstigator);
+	UFUNCTION(BlueprintImplementableEvent, meta = (DisplayName = "OnManaChanged"))
+	void BP_OnManaChanged(float Mana, float MaxMana);
+	UFUNCTION(BlueprintImplementableEvent, meta = (DisplayName = "OnMainAttributeChanged"))
+	void BP_OnMainAttributeChanged(EAttributeType Type, float CurrentAttributeValue);
+
+	UFUNCTION(BlueprintImplementableEvent, meta = (DisplayName = "OnDeath"))
+	void BP_OnDeath();
+
 private:
 	void MoveForward(float Value);
 	void MoveRight(float Value);
 
+	UFUNCTION()
+	void OnHealthChanged(float Health, float MaxHealth, bool FullHealth, float PreviousHealth, AActor *EffectInstigator);
+	UFUNCTION()
+	void OnManaChanged(float Mana, float MaxMana);
+	UFUNCTION()
+	void OnMainAttributeChanged(EAttributeType Type, float CurrentAttributeValue);
 };

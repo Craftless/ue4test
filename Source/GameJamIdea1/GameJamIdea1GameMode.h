@@ -19,8 +19,10 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetNewTargetGTD(float Value);
 
-protected:
+	UPROPERTY(BlueprintReadOnly)
 	float TargetGlobalTimeDilation = 1.f;
+
+protected:
 	bool bIsInterping = false;
 };
 
