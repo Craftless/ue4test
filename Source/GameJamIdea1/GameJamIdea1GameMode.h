@@ -13,6 +13,15 @@ class AGameJamIdea1GameMode : public AGameModeBase
 
 public:
 	AGameJamIdea1GameMode();
+
+	virtual void Tick(float DeltaTime) override;
+
+	UFUNCTION(BlueprintCallable)
+	void SetNewTargetGTD(float Value);
+
+protected:
+	float TargetGlobalTimeDilation = 1.f;
+	bool bIsInterping = false;
 };
 
 

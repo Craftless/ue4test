@@ -2,12 +2,18 @@
 
 
 #include "ProjectCharacter.h"
+#include "AbilitySystemComponent.h"
+#include "AttributeSetBase.h"
+#include "Abilities/GameplayAbility.h"
 
 // Sets default values
 AProjectCharacter::AProjectCharacter()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
+	SystemComp = CreateDefaultSubobject<UAbilitySystemComponent>(FName("Ability System Component"));
+	AttributeSetBase = CreateDefaultSubobject<UAttributeSetBase>(FName("Attribute Set Base Component"));
 
 }
 
@@ -24,6 +30,32 @@ void AProjectCharacter::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 }
+
+
+void AProjectCharacter::AcquireAbility(TSubclassOf<UGameplayAbility> AbilityToAcquire) 
+{
+	if (!ensure(SystemComp)) return;
+	if (!HasAuthority()) return;
+	if (AbilityToAcquire) {
+		FGameplayAbilitySpecDef SpecDef = FGameplayAbilitySpecDef();
+		SpecDef.Ability = AbilityToAcquire;
+		FGameplayAbilitySpec Spec = FGameplayAbilitySpec(SpecDef, 1);
+		SystemComp -> GiveAbility(Spec);
+	}
+	SystemComp -> InitAbilityActorInfo(this, this);
+}
+
+void AProjectCharacter::AcquireAbilities(TArray<TSubclassOf<UGameplayAbility>> AbilitiesToAcquire) 
+{
+	if (HasAuthority()) {
+		for (TSubclassOf<UGameplayAbility> AbilityClass : AbilitiesToAcquire) {
+			AcquireAbility(AbilityClass);
+		}
+	}
+}
+
+
+
 
 // Called to bind functionality to input
 void AProjectCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)

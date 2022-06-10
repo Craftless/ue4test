@@ -1,6 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "ActorTimeDilation.h"
+#include "Kismet/GameplayStatics.h"
+#include "GameJamIdea1GameMode.h"
 
 // Sets default values for this component's properties
 UActorTimeDilation::UActorTimeDilation()
@@ -17,6 +19,16 @@ void UActorTimeDilation::BeginPlay()
 {
 	Super::BeginPlay();
 
+	AGameModeBase *CurrentGameMode = UGameplayStatics::GetGameMode(this);
+	if (CurrentGameMode)
+	{
+		AGameJamIdea1GameMode *GM = Cast<AGameJamIdea1GameMode>(CurrentGameMode);
+		if (GM)
+		{
+			GameMode = GM;
+		}
+	}
+
 	// ...
 }
 
@@ -25,11 +37,12 @@ void UActorTimeDilation::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	// ...
+	// Interp global
 }
 
 void UActorTimeDilation::ChangeTimeDilation(float amount, bool isSelfAffected)
 {
+	if (!ensure(GameMode)) return;
 	if (!isSelfAffected)
 	{
 		AActor *Owner = this->GetOwner();
@@ -37,25 +50,13 @@ void UActorTimeDilation::ChangeTimeDilation(float amount, bool isSelfAffected)
 			return;
 		Owner->CustomTimeDilation = 1 / amount;
 	}
-
-	UWorld *World = this->GetWorld();
-	if (!ensure(World))
-		return;
-	AWorldSettings *WorldSettings = World->GetWorldSettings();
-	if (!ensure(WorldSettings))
-		return;
-	WorldSettings->SetTimeDilation(amount);
+	GameMode -> SetNewTargetGTD(amount);
 }
 
 void UActorTimeDilation::ResetTimeDilation()
 {
-	UWorld *World = this->GetWorld();
-	if (!ensure(World))
-		return;
-	AWorldSettings *WorldSettings = World->GetWorldSettings();
-	if (!ensure(WorldSettings))
-		return;
-	WorldSettings->SetTimeDilation(1.f);
+	if (!ensure(GameMode)) return;
+	GameMode -> SetNewTargetGTD(1.f);
 
 	AActor *Owner = this->GetOwner();
 	if (!ensure(Owner))

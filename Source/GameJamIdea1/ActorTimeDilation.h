@@ -19,6 +19,7 @@ public:
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
+	float TargetActorCustomDilation = 0.f;
 
 public:	
 	// Called every frame
@@ -29,6 +30,9 @@ public:
 	
 	UFUNCTION(BLueprintCallable)
 	void ResetTimeDilation();
+
+private:
+	class AGameJamIdea1GameMode* GameMode;
 
 		
 };
